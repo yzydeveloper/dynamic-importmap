@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "lodash": "https://cdn.skypack.dev/lodash",
+    "vue": "https://cdn.skypack.dev/vue@~3.1.0/dist/vue.esm-browser.prod.js"
+  }
+}

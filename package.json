@@ -1,0 +1,6 @@
+{
+    "name": "dynamic-importmap",
+    "scripts": {
+        "serve": "http-server -c -1"
+    }
+}

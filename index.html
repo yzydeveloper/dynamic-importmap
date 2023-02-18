@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>dynamic-importmap</title>
+        <script type="importmap-shim" crossorigin src="./importmap.json"></script>
+        <script type="module-shim" src="./main.js"></script>
+    </head>
+    <body>
+        <script>
+            (function () {
+                const supported = HTMLScriptElement.supports && HTMLScriptElement.supports('importmap')
+                if (!supported) {
+                    const shim = document.createElement('script')
+                    shim.src = './es-module-shims.js'
+                    shim.async = true
+                    shim.onload = () => {
+                        window.__importMap = () => importShim.getImportMap()
+                    }
+                    document.head.appendChild(shim)
+                    return
+                }
+                const importRef = document.querySelector('script[type="importmap-shim"]')
+                const im = document.createElement('script')
+                im.type = 'importmap'
+                fetch(importRef.src).then(res => res.json())
+                    .then(data => {
+                        window.__importMap = () => data
+                        im.innerHTML = JSON.stringify(data)
+                        importRef.after(im)
+                        importRef.remove()
+                        const preload = [...document.querySelectorAll('link[rel="modulepreload-shim"]')]
+                        preload.forEach(item => {
+                            item.rel = 'modulepreload'
+                        })
+                        const mainModule = document.querySelector('script[type="module-shim"]')
+                        mainModule.type = 'module'
+                        import(mainModule.src)
+                    })
+            })()
+        </script>
+        <div id="app">
+            <p>
+                <label>vue: </label>
+                <span>{{ `v${version}` }}</span>
+            </p>
+            <p>
+                <label>loadsh: </label>
+                <span>{{ `v${VERSION}` }}</span>
+            </p>
+        </div>
+    </body>
+</html>
